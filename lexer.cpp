@@ -125,7 +125,9 @@ public:
 			}
 
 			string word = this->read_word();
-			if (is_in(valid_commands, word)) return Token(COMMAND, word);
+			if (is_in(valid_commands, word)) {
+					return Token(COMMAND, word);
+			}
 
 			error();
 		}
