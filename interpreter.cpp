@@ -5,9 +5,6 @@ private:
 	Lexer lexer;
 	Token current;
 
-	int x, y, direction;
-	string color;
-
 	void error() {
 		//TODO fix this shiet
 		cout << "Syntaxfel på rad " << endl;
@@ -22,87 +19,62 @@ private:
 		}
 	}
 
-	// COMMAND_LIST -> INTRUCTION COMMAND_LIST
-	void command_list() {
-		while (current.get_type() == COMMAND && current.get_type() != $) {
-			instruction();
-		}
-	}
+    // factor: INTEGER | LPAREN expr RPAREN
+    int factor() {
+        Token token = current;
+        if(token.get_type() == INTEGER) {
+            eat(INTEGER);
+            return token.get_int();
+        }
+        if(token.get_type() == LPAREN) {
+            eat(LPAREN);
+            int result = expr();
+            eat(RPAREN);
+            return result;
+        }
+    }
 
-	// INSTRUCTION -> COMMAND INTEGER DOT | COMMAND DOT
-	// COMMAND -> FORW | BACK | LEFT | RIGHT | UP | DOWN | COLOR | REP
-	void instruction() {
-		string command = current.get_value();
-		transform(command.begin(), command.end(), command.begin(), ::tolower);
-		eat(COMMAND);
+    // term: factor ((MUL|DIV) factor)*
+    int term() {
+        int result = factor();
 
-		if (command == "forw") {
-			int magnitude = std::stoi(current.get_value());
-			eat(INTEGER);
-			eat(DOT);
-		}
+        while(current.get_type() == MUL || current.get_type() == DIV) {
+            Token token = current;
+            if(token.get_type() == MUL) {
+                eat(MUL);
+                result = result * factor();
+            } 
+             if(token.get_type() == DIV) {
+                eat(DIV);
+                result = result / factor();
+            }
+        }
+        
+        return result;
+    }
 
-		if (command == "back") {
-			int magnitude = std::stoi(current.get_value());
-			eat(INTEGER);
-			eat(DOT);
-		}
+    // expr : term ((PLUS|MINUS) term)*
+    int expr() {
+        int result = term();
 
-		if (command == "left") {
-			int magnitude = std::stoi(current.get_value());
-			eat(INTEGER);
-			eat(DOT);
-		}
+        while(current.get_type() == PLUS || current.get_type() == MINUS) {
+            Token token = current;
+            if(token.get_type() == PLUS) {
+                eat(PLUS);
+                result = result + term();
+            } else if(token.get_type() == MINUS) {
+                eat(MINUS);
+                result = result - term();
+            }
+        }
 
-		if (command == "right") {
-			int magnitude = std::stoi(current.get_value());
-			eat(INTEGER);
-			eat(DOT);
-		}
-
-		if (command == "color") {
-			string color = current.get_value();
-			eat(HEX);
-			eat(DOT);
-		}
-
-		if (command == "rep") {
-			loop();
-		}
-
-		if (command == "up") {
-			eat(DOT);
-		}
-
-		if (command == "down") {
-			eat(DOT);
-		}
-
-	}
-
-	// loop -> REP QUOT COMMAND_LIST QUOT | REP INSTRUCTION
-	void loop() {
-		int magnitude = std::stoi(current.get_value());
-		eat(INTEGER);
-
-		if (current.get_type() == QUOT) {
-			eat(QUOT);
-			//TODO FIX THIS. DOESN'T REPEAT THE SAME COMMAND
-			while (magnitude-- > 0) {
-				instruction();
-			}
-			eat(QUOT);
-		}
-		else {
-			//TODO SAME HERE
-			while (magnitude-- > 0) {
-				instruction();
-			}
-		}
-	}
+        return result;
+    }
 
 public:
-	Interpreter() : lexer{ lexer }, current{ lexer.get_next_token() } {
+	Interpreter(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
 	}
+
+    int start() { return expr(); }
 
 };

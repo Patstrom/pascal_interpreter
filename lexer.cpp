@@ -14,9 +14,6 @@ private:
 	int pos;
 	int len;
 	int line_number = 1;
-	vector<string> valid_commands;
-	vector<string> p_commands; // parameterized commands
-	// Apparently Microsoft doesn't care enough to fix bugs in VS13. Initializer lists doesn't work.
 
 	void error() {
 		cout << "Syntaxfel på rad " << line_number;
@@ -51,15 +48,6 @@ private:
 		return result;
 	}
 
-	string read_hex() {
-		string result = "";
-		while (isxdigit(current_char) && current_char != 0) {
-			result += current_char;
-			advance();
-		}
-		return result;
-	}
-
 	string read_word() {
 		string result = "";
 		while (isalpha(current_char) && current_char != 0) {
@@ -67,7 +55,6 @@ private:
 			advance();
 		}
 
-		if (is_in(p_commands, result) && !isspace(current_char)) error();
 		return result;
 	}
 
@@ -84,8 +71,6 @@ public:
 		len = text.length();
 		current_char = text[pos];
 
-		valid_commands = { "forw", "back", "left", "right", "up", "down", "color", "rep" };
-		p_commands = { "forw", "back", "left", "right", "color", "rep" };
 	}
 
 	Token get_next_token() {
@@ -108,26 +93,39 @@ public:
 				return Token(INTEGER, this->read_integer());
 			}
 
-			if (current_char == '.') {
+			if (current_char == '+') {
 				advance();
-				return Token(DOT, ".");
+				return Token(PLUS, "+");
 			}
 
-			// Read a hexadecimal value
-			if (current_char == '#') {
+			if (current_char == '-') {
 				advance();
-				return Token(HEX, this->read_hex());
+				return Token(MINUS, "-");
 			}
 
-			if (current_char == '\"') {
+			if (current_char == '*') {
 				advance();
-				return Token(QUOT, "\"");
+				return Token(MUL, "*");
 			}
 
-			string word = this->read_word();
-			if (is_in(valid_commands, word)) {
-					return Token(COMMAND, word);
+			if (current_char == '/') {
+				advance();
+				return Token(DIV, "/");
 			}
+
+			if (current_char == '(') {
+				advance();
+				return Token(LPAREN, "(");
+			}
+
+			if (current_char == ')') {
+				advance();
+				return Token(RPAREN, ")");
+			}
+			//string word = this->read_word();
+			//if (is_in(valid_commands, word)) {
+			//		return Token(COMMAND, word);
+			//}
 
 			error();
 		}

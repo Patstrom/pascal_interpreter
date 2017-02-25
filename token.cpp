@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-enum Type { $, DOT, INTEGER, HEX, COMMAND, QUOT };
+enum Type { $, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN };
 
 class Token
 {
@@ -13,4 +13,5 @@ public:
 	Token(Type token, std::string value) { t = token; v = value; }
 	Type get_type() { return t; }
 	std::string get_value() { return v; }
+    int get_int() { return std::stoi(v); }
 };
