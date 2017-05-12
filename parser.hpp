@@ -1,4 +1,6 @@
-#include "lexer.cpp"
+#pragma once
+#include "ast.hpp"
+#include "lexer.hpp"
 
 class Interpreter {
 private:
@@ -20,61 +22,61 @@ private:
 	}
 
     // factor: INTEGER | LPAREN expr RPAREN
-    int factor() {
+    Node factor() {
         Token token = current;
         if(token.get_type() == INTEGER) {
             eat(INTEGER);
-            return token.get_int();
+            return num(token);
         }
         if(token.get_type() == LPAREN) {
             eat(LPAREN);
-            int result = expr();
+            Node n = expr();
             eat(RPAREN);
-            return result;
+            return n;
         }
     }
 
     // term: factor ((MUL|DIV) factor)*
-    int term() {
-        int result = factor();
+    Node term() {
+        Node n = factor();
 
         while(current.get_type() == MUL || current.get_type() == DIV) {
             Token token = current;
             if(token.get_type() == MUL) {
                 eat(MUL);
-                result = result * factor();
             } 
              if(token.get_type() == DIV) {
                 eat(DIV);
-                result = result / factor();
             }
+
+            n = binop(n, token, factor());
         }
         
-        return result;
+        return n;
     }
 
     // expr : term ((PLUS|MINUS) term)*
-    int expr() {
-        int result = term();
+    Node expr() {
+        Node n = term();
 
         while(current.get_type() == PLUS || current.get_type() == MINUS) {
             Token token = current;
             if(token.get_type() == PLUS) {
                 eat(PLUS);
-                result = result + term();
             } else if(token.get_type() == MINUS) {
                 eat(MINUS);
-                result = result - term();
             }
+
+            n = binop(n, token, term());
         }
 
-        return result;
+        return n;
     }
 
 public:
 	Interpreter(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
 	}
 
-    int start() { return expr(); }
+    Node start() { return expr(); }
 
 };

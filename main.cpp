@@ -1,7 +1,17 @@
-#include "lexer.cpp"
-#include "interpreter.cpp"
+#include "lexer.hpp"
+#include "parser.hpp"
+#include "ast.hpp"
 #include <iostream>
 #include <fstream>
+
+void printTree(std::shared_ptr<Node> n) {
+    if(n == NULL) return;
+    Token t = n->get_token();
+    std::cout << t.get_type() << " : " << t.get_value() << std::endl;
+    printTree(n->get_left());
+    printTree(n->get_right());
+}
+
 
 int main(int argc, char * argv[])
 {
@@ -9,7 +19,9 @@ int main(int argc, char * argv[])
         if(line.empty()) continue;
         Lexer lexer(line);
         Interpreter interpreter(lexer);
-        std::cout << interpreter.start() << std::endl;
+        std::shared_ptr<Node> root = std::make_shared<Node>(interpreter.start());
+
+        printTree(root);
     }
 //	while (1) {
 //		std::string text = "";
