@@ -2,7 +2,7 @@
 #include "ast.hpp"
 #include "lexer.hpp"
 
-class Interpreter {
+class Parser {
 private:
 	Lexer lexer;
 	Token current;
@@ -26,7 +26,7 @@ private:
         Token token = current;
         if(token.get_type() == INTEGER) {
             eat(INTEGER);
-            return num(token);
+            return Node(token, NUM);
         }
         if(token.get_type() == LPAREN) {
             eat(LPAREN);
@@ -49,7 +49,7 @@ private:
                 eat(DIV);
             }
 
-            n = binop(n, token, factor());
+            n = Node(n, factor(), token, BIN);
         }
         
         return n;
@@ -67,16 +67,16 @@ private:
                 eat(MINUS);
             }
 
-            n = binop(n, token, term());
+            n = Node(n, term(), token, BIN);
         }
 
         return n;
     }
 
 public:
-	Interpreter(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
+	Parser(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
 	}
 
-    Node start() { return expr(); }
+    std::shared_ptr<Node> parse() { return std::make_shared<Node>(expr()); }
 
 };

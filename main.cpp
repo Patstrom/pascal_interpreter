@@ -1,6 +1,7 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "ast.hpp"
+#include "interpreter.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -18,10 +19,10 @@ int main(int argc, char * argv[])
     for(std::string line; std::getline(std::cin, line);) {
         if(line.empty()) continue;
         Lexer lexer(line);
-        Interpreter interpreter(lexer);
-        std::shared_ptr<Node> root = std::make_shared<Node>(interpreter.start());
+        Parser parser(lexer);
+        Interpreter interpreter(parser.parse());
 
-        printTree(root);
+        std::cout << interpreter.interpret() << std::endl;
     }
 //	while (1) {
 //		std::string text = "";
