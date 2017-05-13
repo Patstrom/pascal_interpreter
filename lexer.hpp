@@ -15,16 +15,17 @@ private:
 	int len;
 	int line_number = 1;
 
-	void error() {
-		cout << "Syntaxfel på rad " << line_number;
-		//exit(0);
-	}
 
 	void advance() {
 		pos++;
-		if (pos > len - 1) 
+		if (pos >= len)
 			current_char = '\0';
 		else current_char = text[pos];
+	}
+
+	void error() {
+		cout << "Syntaxerror on line " << line_number << endl;
+		exit(0);
 	}
 
 	void skip_whitespace() {
@@ -64,7 +65,6 @@ private:
 	}
 
 public:
-	// Initializer lists doesn't work...
 	Lexer(string t) {
 		text = t;
 		pos = 0;

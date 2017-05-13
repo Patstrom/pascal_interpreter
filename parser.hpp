@@ -7,9 +7,14 @@ private:
 	Lexer lexer;
 	Token current;
 
-	void error() {
-		//TODO fix this shiet
-		cout << "Syntaxfel på rad " << endl;
+    void error() {
+        cout << "Error parsing" << endl;
+        exit(0);
+    }
+
+	void error(Type expected_type) {
+		cout << "Expected type " << expected_type << endl;
+        error();
 	}
 
 	void eat(Type expected_type) {
@@ -17,7 +22,8 @@ private:
 			current = lexer.get_next_token();
 		}
 		else {
-			error();
+			error(expected_type);
+			current = lexer.get_next_token();
 		}
 	}
 
@@ -40,6 +46,8 @@ private:
                 eat(RPAREN);
                 return n;
         }
+
+        error();
     }
 
     // term: factor ((MUL|DIV) factor)*
