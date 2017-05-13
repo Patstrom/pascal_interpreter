@@ -21,18 +21,24 @@ private:
 		}
 	}
 
-    // factor: INTEGER | LPAREN expr RPAREN
+    // factor: (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
     Node factor() {
         Token token = current;
-        if(token.get_type() == INTEGER) {
-            eat(INTEGER);
-            return Node(token, NUM);
-        }
-        if(token.get_type() == LPAREN) {
-            eat(LPAREN);
-            Node n = expr();
-            eat(RPAREN);
-            return n;
+        switch(token.get_type()) {
+            case PLUS:
+                eat(PLUS);
+                return Node(factor(), token, UNARY);
+            case MINUS:
+                eat(MINUS);
+                return Node(factor(), token, UNARY);
+            case INTEGER:
+                eat(INTEGER);
+                return Node(token, NUM);
+            case LPAREN:
+                eat(LPAREN);
+                Node n = expr();
+                eat(RPAREN);
+                return n;
         }
     }
 

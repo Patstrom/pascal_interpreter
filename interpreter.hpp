@@ -11,6 +11,15 @@ class Interpreter {
     private:
         node_ptr tree;
 
+        int visit_unary(node_ptr n) {
+            switch(n->get_token().get_type()) {
+                case PLUS:
+                    return + visit(n->get_left());
+                case MINUS:
+                    return - visit(n->get_left());
+            }
+        }
+
         int visit_num(node_ptr n) {
             return n->get_token().get_int();
         }
@@ -34,6 +43,8 @@ class Interpreter {
                     return visit_num(n);
                 case BIN:
                     return visit_binop(n);
+                case UNARY:
+                    return visit_unary(n);
             }
         }
 

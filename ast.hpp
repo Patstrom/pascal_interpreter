@@ -16,8 +16,11 @@ class Node {
         Node(Node l, Node r, Token t, Op o) : token(t), op(o) {
             left = std::make_shared<Node>(l);
             right = std::make_shared<Node>(r);
-        }
-        Node(Token t, Op o) : left(NULL), right(NULL), token(t), op(o) {}
+        } // General one
+        Node(Node expr, Token t, Op o) : right(NULL), token(t), op(o) {
+            left = std::make_shared<Node>(expr);
+        } // For unary operators
+        Node(Token t, Op o) : left(NULL), right(NULL), token(t), op(o) {} // For numbers
 
         std::shared_ptr<Node> get_left() { return left; }
         Token get_token() { return token; }
