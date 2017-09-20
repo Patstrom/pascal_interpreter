@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 using namespace std;
 
@@ -15,6 +16,11 @@ private:
 	int len;
 	int line_number = 1;
 
+    map<string, Token> reserved_keywords = {
+        make_pair ("BEGIN", Token(BEGIN, "BEGIN")),
+        make_pair ("END", Token(END, "END"))
+    };
+
 
 	void advance() {
 		pos++;
@@ -22,6 +28,15 @@ private:
 			current_char = '\0';
 		else current_char = text[pos];
 	}
+
+    char peek() {
+       int peek_pos = pos + 1;
+       if (peek_pos > len - 1) {
+            return 0;
+       } else {
+            return text[peek_pos];
+       }
+    }
 
 	void error() {
 		cout << "Syntaxerror on line " << line_number << endl;
@@ -49,20 +64,21 @@ private:
 		return result;
 	}
 
-	string read_word() {
+	Token read_word() {
 		string result = "";
 		while (isalpha(current_char) && current_char != 0) {
 			result += current_char;
 			advance();
 		}
 
-		return result;
+        // Word is reserved
+        if ( reserved_keywords.find(result) != reserved_keywords.end()) {
+            return reserved_keywords[result];
+        } else {
+            return Token(ID, result);
+        }
 	}
 
-	bool is_in(vector<string> & vector,  string value) {
-		transform(value.begin(), value.end(), value.begin(), ::tolower); // Make lowercase
-		return find(vector.begin(), vector.end(), value) != vector.end();
-	}
 
 public:
 	Lexer(string t) {
@@ -122,10 +138,28 @@ public:
 				advance();
 				return Token(RPAREN, ")");
 			}
-			//string word = this->read_word();
-			//if (is_in(valid_commands, word)) {
-			//		return Token(COMMAND, word);
-			//}
+
+            if (current_char == ';') {
+                advance();
+                return Token(SEMI, ";");
+            }
+
+            if (current_char == '.') {
+                advance();
+                return Token(DOT, ".");
+            }
+
+            if (current_char == ':' && peek() == '=') {
+                advance();
+                advance();
+                return Token(EQ, ":=");
+            }
+
+            // Single character token are exhausted. Must be a word
+            if( isalpha(current_char) ) {
+                return read_word(); 
+            }
+
 
 			error();
 		}

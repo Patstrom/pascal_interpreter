@@ -27,7 +27,7 @@ private:
 		}
 	}
 
-    // factor: (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
+    // factor: (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN | VAR
     Node factor() {
         Token token = current;
         switch(token.get_type()) {
@@ -41,10 +41,14 @@ private:
                 eat(INTEGER);
                 return Node(token, NUM);
             case LPAREN:
-                eat(LPAREN);
-                Node n = expr();
-                eat(RPAREN);
-                return n;
+                {
+                    eat(LPAREN);
+                    Node n = expr();
+                    eat(RPAREN);
+                    return n;
+                }
+            default:
+                return variable();
         }
 
         error();
@@ -87,10 +91,82 @@ private:
         return n;
     }
 
+    // program : compount_statement DOT
+    Node program() {
+        Node n = compound_statement();
+        eat(DOT);
+        return n;
+    }
+
+    // compound_statement: BEGIN statement_list END
+    Node compound_statement() {
+        eat(BEGIN);
+        std::vector<Node> nodes = statement_list();
+        eat(END);
+
+        Node n(COMPOUND, nodes);
+        return n;
+    }
+
+    // statement_list: statement
+    //                 | statement SEMI statement_list()
+    vector<Node> statement_list() {
+        Node n = statement();
+
+        vector<Node> results = { n };
+
+        while (current.get_type() == SEMI) {
+            eat(SEMI);
+            results.push_back(statement());
+        }
+
+        if (current.get_type() == ID) {
+            error();
+        }
+
+        return results;
+    }
+
+    // statement: compound_statement
+    //            | assignment_statement
+    //            | empty
+    Node statement() {
+        if (current.get_type() == BEGIN) {
+            return compound_statement();
+        }
+        else if (current.get_type() == ID) {
+            return assignment_statement();
+        } else {
+            return empty();
+        }
+    }
+
+    // assignment_statement: variable ASSIGN expr
+    Node assignment_statement() {
+        Token token = current;
+        Node left = variable();
+        eat(EQ);
+        Node right = expr();
+
+        return Node(left, right, token, ASSIGN);
+    }
+
+    // variable: ID
+    Node variable() {
+        Token token = current;
+        eat(ID);
+        return Node(token, VAR);
+    }
+
+    // empty: 
+    Node empty() {
+        return Node(Token(EMPTY, ""), NOOP);
+    }
+
 public:
 	Parser(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
 	}
 
-    std::shared_ptr<Node> parse() { return std::make_shared<Node>(expr()); }
+    std::shared_ptr<Node> parse() { return std::make_shared<Node>(program()); }
 
 };
