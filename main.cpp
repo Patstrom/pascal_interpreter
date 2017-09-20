@@ -28,6 +28,7 @@ int main(int argc, char * argv[])
 
     std::string program((std::istreambuf_iterator<char>(infile)),
                      std::istreambuf_iterator<char>());
+    infile.close();
 
     Lexer lexer(program);
     Parser parser(lexer);
