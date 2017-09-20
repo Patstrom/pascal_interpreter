@@ -2,7 +2,7 @@
 #include <memory>
 #include "token.hpp"
 
-enum Op { NUM, BIN, UNARY, COMPOUND, ASSIGN, VAR, NOOP };
+enum Op { NUM, BIN, UNARY, COMPOUND, EQ, VAR, NOOP };
 
 class Node {
     protected:

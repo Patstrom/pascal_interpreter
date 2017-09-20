@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-enum Type { $, EMPTY, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, BEGIN, END, DOT, ID, EQ, SEMI };
+enum Type { $, EMPTY, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, BEGIN, END, DOT, ID, ASSIGN, SEMI };
 
 class Token
 {

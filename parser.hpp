@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
 #include "lexer.hpp"
+#include <iostream>
 
 class Parser {
 private:
@@ -109,7 +110,7 @@ private:
     }
 
     // statement_list: statement
-    //                 | statement SEMI statement_list()
+    //                 | statement SEMI statement_list
     vector<Node> statement_list() {
         Node n = statement();
 
@@ -143,12 +144,12 @@ private:
 
     // assignment_statement: variable ASSIGN expr
     Node assignment_statement() {
-        Token token = current;
         Node left = variable();
-        eat(EQ);
+        Token token = current;
+        eat(ASSIGN);
         Node right = expr();
 
-        return Node(left, right, token, ASSIGN);
+        return Node(left, right, token, EQ);
     }
 
     // variable: ID
@@ -167,6 +168,11 @@ public:
 	Parser(Lexer l) : lexer{ l }, current{ lexer.get_next_token() } {
 	}
 
-    std::shared_ptr<Node> parse() { return std::make_shared<Node>(program()); }
+    std::shared_ptr<Node> parse() {
+        Node n = program();
+        if (current.get_type() != $) error();
+
+        return std::make_shared<Node>(n);
+    }
 
 };

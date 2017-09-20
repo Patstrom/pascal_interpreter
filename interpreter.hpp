@@ -1,9 +1,11 @@
+#pragma once
 #include <memory>
 #include "ast.hpp"
 #include "token.hpp"
 
 #include <stdio.h>
 #include <string>
+#include <map>
 
 typedef std::shared_ptr<Node> node_ptr;
 
@@ -49,17 +51,20 @@ class Interpreter {
             return;
         }
 
-        void visit_assign(node_ptr n) {
+        int visit_assign(node_ptr n) {
             std::string var_name = n->get_left()->get_token().get_value();
-            symbol_table[var_name] = visit(n->get_right());
+            int value = visit(n->get_right());
+            symbol_table[var_name] = value;
+            return value;
         }
+
 
         int visit_var(node_ptr n) {
             std::string var_name = n->get_token().get_value();
             if ( symbol_table.find(var_name) != symbol_table.end() ) {
-                return 0;
+                return symbol_table[var_name];
             } else {
-                return symbol_table["var_name"];
+                exit(1);
             }
         }
 
@@ -72,17 +77,28 @@ class Interpreter {
                 case UNARY:
                     return visit_unary(n);
                 case COMPOUND:
-                    visit_compound(n);
-                case ASSIGN:
-                    visit_assign(n);
+                     visit_compound(n);
+                     break;
+                case EQ:
+                    return visit_assign(n);
                 case VAR:
-                    visit_var(n);
+                    return visit_var(n);
                 case NOOP:
                     visit_noop(n);
+                    break;
             }
+            return 0;
         }
 
     public:
     Interpreter(node_ptr tree) : tree(tree) {}
-    int interpret() { return visit(tree); }
+    void interpret() { 
+        visit(tree);
+        std::cout << "symbol_table: {" << std::endl;
+        for(auto elem : symbol_table) {
+            std::cout << "\t" << elem.first << " : " << elem.second << std::endl;
+        }
+        std::cout << "}" << std::endl;
+    }
+
 };

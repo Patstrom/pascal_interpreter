@@ -152,7 +152,7 @@ public:
             if (current_char == ':' && peek() == '=') {
                 advance();
                 advance();
-                return Token(EQ, ":=");
+                return Token(ASSIGN, ":=");
             }
 
             // Single character token are exhausted. Must be a word
