@@ -1,3 +1,9 @@
 simple LL(1) interpreter of a subset of pascal.
 
 Thanks to a great guide here: https://ruslanspivak.com/lsbasi-part7/
+
+
+```bash
+g++ main.cpp
+./a.out program.pascal
+```
