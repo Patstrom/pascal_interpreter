@@ -2,6 +2,7 @@
 #include <memory>
 #include "ast.hpp"
 #include "token.hpp"
+#include "symbol_table_builder.hpp"
 
 #include <stdio.h>
 #include <string>
@@ -10,7 +11,7 @@
 typedef std::shared_ptr<Node> node_ptr;
 
 class Interpreter {
-    std::map<std::string, double> symbol_table;
+    map<string, double> GLOBAL_MEM;
 
     private:
         node_ptr tree;
@@ -57,18 +58,20 @@ class Interpreter {
         double visit_assign(node_ptr n) {
             std::string var_name = n->get_left()->get_token().get_value();
             double value = visit(n->get_right());
-            symbol_table[var_name] = value;
+            GLOBAL_MEM[var_name] = value;
             return value;
         }
 
 
         double visit_var(node_ptr n) {
             std::string var_name = n->get_token().get_value();
-            if ( symbol_table.find(var_name) != symbol_table.end() ) {
-                return symbol_table[var_name];
+            if ( GLOBAL_MEM.find(var_name) != GLOBAL_MEM.end() ) {
+                return GLOBAL_MEM[var_name];
             } else {
+                cout << var_name << " was no declared" << endl;
                 exit(1);
             }
+
         }
 
         void visit_program(node_ptr n) {
@@ -118,6 +121,7 @@ class Interpreter {
                     break;
                 case TYPE:
                     visit_type(n);
+                    break;
             }
             return 0;
         }
@@ -125,9 +129,11 @@ class Interpreter {
     public:
     Interpreter(node_ptr tree) : tree(tree) {}
     void interpret() { 
+        SymbolTableBuilder stb;
+        stb.visit(tree);
         visit(tree);
         std::cout << "symbol_table: {" << std::endl;
-        for(auto elem : symbol_table) {
+        for(auto elem : GLOBAL_MEM) {
             std::cout << "\t" << elem.first << " : " << elem.second << std::endl;
         }
         std::cout << "}" << std::endl;
