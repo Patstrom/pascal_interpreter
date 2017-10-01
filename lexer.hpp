@@ -62,8 +62,8 @@ private:
 
 	void skip_multi_line_comment() {
 		while (current_char != '}' && current_char != 0) {
-            if(current_char == '\n') line_number++;
             advance();
+            if(current_char == '\n') line_number++;
         }
 	}
 
@@ -76,6 +76,7 @@ private:
 
         if (current_char == '.') {
             result += current_char;
+            advance();
 
             while (isdigit(current_char) && current_char != 0) {
                 result += current_char;
@@ -89,7 +90,7 @@ private:
 
 	Token read_word() {
 		string result = "";
-		while (isalpha(current_char) && current_char != 0) {
+		while (isalnum(current_char) && current_char != 0) {
 			result += current_char;
 			advance();
 		}
@@ -129,6 +130,7 @@ public:
 
             if (current_char == '{') {
                 this->skip_multi_line_comment();
+                advance(); // Advance part the }
                 continue;
             }
 
