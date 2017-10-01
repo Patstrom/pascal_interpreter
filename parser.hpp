@@ -10,6 +10,7 @@ private:
 
     void error() {
         cout << "Error parsing" << endl;
+        cout << "Current token: " << current.get_type() << " : " << current.get_value() << endl;
         exit(0);
     }
 
@@ -220,8 +221,8 @@ private:
         
         vector<Node> results;
         Node type_node = type_spec();
-        for(auto it = begin(var_nodes); it != end(var_nodes);) {
-            results.push_back(Node(*it, type_node, Token(EMPTY, ""), VARDECL ));
+        for(auto var : var_nodes) {
+            results.push_back(Node(var, type_node, Token(EMPTY, ""), VARDECL ));
         }
 
         return results;
