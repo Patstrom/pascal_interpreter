@@ -54,7 +54,7 @@ typedef std::shared_ptr<Node> node_ptr;
 
             Symbol var_symbol = symbols.lookup(var_name);
             if ( var_symbol.get_name() == "" && var_symbol.get_type() == nullptr ) {
-                cout << "Variable is not defined" << endl;
+                cout << var_name << " is not defined" << endl;
                 exit(1);
             }
         }
@@ -109,4 +109,6 @@ typedef std::shared_ptr<Node> node_ptr;
             }
 
         }
+
+        const SymbolTable& get_symbol_table() const { return symbols; }
 };
