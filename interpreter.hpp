@@ -132,11 +132,12 @@ class Interpreter {
         SymbolTableBuilder stb;
         stb.visit(tree);
         visit(tree);
-        std::cout << "symbol_table: {" << std::endl;
+        std::cout << "GLOBAL_MEM: {" << std::endl;
         for(auto elem : GLOBAL_MEM) {
             std::cout << "\t" << elem.first << " : " << elem.second << std::endl;
         }
         std::cout << "}" << std::endl;
+        std::cout << stb.get_symbol_table() << std::endl;
     }
 
 };
