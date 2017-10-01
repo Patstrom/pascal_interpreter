@@ -17,6 +17,11 @@ private:
 	int line_number = 1;
 
     map<string, Token> reserved_keywords = {
+        make_pair ("PROGRAM", Token(PROGRAM, "PROGRAM"))
+        make_pair ("VAR", Token(VAR, "VAR"))
+        make_pair ("DIV", Token(INTEGER_DIV, "DIV"))
+        make_pair ("INTEGER", Token(INTEGER, "INTEGER"))
+        make_pair ("REAL", Token(REAL, "REAL"))
         make_pair ("BEGIN", Token(BEGIN, "BEGIN")),
         make_pair ("END", Token(END, "END"))
     };
@@ -50,18 +55,36 @@ private:
 		}
 	}
 
-	void skip_comment() {
+	void skip_single_line_comment() {
 		while (current_char != '\n' && current_char != 0) advance();
 		line_number++;
 	}
 
-	string read_integer() {
+	void skip_multi_line_comment() {
+		while (current_char != '}' && current_char != 0) {
+            if(current_char == '\n') line_number++;
+            advance();
+        }
+	}
+
+	Token read_number() {
 		string result = "";
 		while (isdigit(current_char) && current_char != 0) {
 			result += current_char;
 			advance();
 		}
-		return result;
+
+        if current_char == '.' {
+            result += current_char;
+
+            while (isdigit(current_char) && current_char != 0) {
+                result += current_char;
+                advance();
+            }
+            return Token(REAL_CONST, result);
+        } else {
+            return TOKEN(INTEGER_CONST, result);
+        }
 	}
 
 	Token read_word() {
@@ -100,13 +123,18 @@ public:
 
 			// Skip comments
 			if (current_char == '%') {
-				this->skip_comment();
+				this->skip_single_line_comment();
 				continue;
 			}
 
+            if (current_char == '{') {
+                this->skip_multi_linecomment();
+                continue;
+            }
+
 			// Read an integer
 			if (isdigit(current_char)) {
-				return Token(INTEGER, this->read_integer());
+				return this->read_number();
 			}
 
 			if (current_char == '+') {
@@ -126,7 +154,7 @@ public:
 
 			if (current_char == '/') {
 				advance();
-				return Token(DIV, "/");
+				return Token(FLOAT_DIV, "/");
 			}
 
 			if (current_char == '(') {
@@ -153,6 +181,16 @@ public:
                 advance();
                 advance();
                 return Token(ASSIGN, ":=");
+            }
+
+            if (current_char == ':') {
+                advance();
+                return Token(COLON, ":");
+            }
+
+            if (current_char == ',') {
+                advance();
+                return Token(COMMA, ",");
             }
 
             // Single character token are exhausted. Must be a word
