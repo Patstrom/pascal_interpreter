@@ -21,15 +21,15 @@ class Node {
         }
 
         // For unary operators
-        Node(Node expr, Token t, Op o) : right(NULL), token(t), op(o) {
+        Node(Node expr, Token t, Op o) : right(nullptr), token(t), op(o) {
             left = std::make_shared<Node>(expr);
         }
 
         // For numbers and types
-        Node(Token t, Op o) : left(NULL), right(NULL), token(t), op(o) {} // For numbers
+        Node(Token t, Op o) : left(nullptr), right(nullptr), token(t), op(o) {} // For numbers
 
         // For compound_statement
-        Node(Op o, std::vector<Node> cs) : left(NULL), right(NULL), token(Token(EMPTY, "")), op(o) {
+        Node(Op o, std::vector<Node> cs) : left(nullptr), right(nullptr), token(Token(EMPTY, "")), op(o) {
             for(auto c : cs) {
                 children.push_back(std::make_shared<Node>(c));
             }
