@@ -28,7 +28,11 @@ private:
 		}
 	}
 
-    // factor: (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN | VAR
+    // factor: (PLUS | MINUS) factor
+    //         | INTEGER_CONST
+    //         | REAL_CONST
+    //         | LPAREN expr RPAREN 
+    //         | variable
     Node factor() {
         Token token = current;
         switch(token.get_type()) {
@@ -38,8 +42,11 @@ private:
             case MINUS:
                 eat(MINUS);
                 return Node(factor(), token, UNARY);
-            case INTEGER:
-                eat(INTEGER);
+            case INTEGER_CONST:
+                eat(INTEGER_CONST);
+                return Node(token, NUM);
+            case REAL_CONST:
+                eat(REAL_CONST);
                 return Node(token, NUM);
             case LPAREN:
                 {
@@ -55,17 +62,21 @@ private:
         error();
     }
 
-    // term: factor ((MUL|DIV) factor)*
+    // term: factor ((MUL| INTEGER_DIV| FLOAT_DIV) factor)*
     Node term() {
         Node n = factor();
 
-        while(current.get_type() == MUL || current.get_type() == DIV) {
+        while(current.get_type() == MUL || current.get_type() == INTEGER_DIV 
+                || current.get_type() == FLOAT_DIV) {
             Token token = current;
             if(token.get_type() == MUL) {
                 eat(MUL);
             } 
-             if(token.get_type() == DIV) {
-                eat(DIV);
+            if(token.get_type() == INTEGER_DIV) {
+                eat(INTEGER_DIV);
+            }
+            if(token.get_type() == FLOAT_DIV) {
+                eat(FLOAT_DIV);
             }
 
             n = Node(n, factor(), token, BIN);
@@ -92,11 +103,17 @@ private:
         return n;
     }
 
-    // program : compount_statement DOT
+    // program : PROG variable SEMI block DOT
     Node program() {
-        Node n = compound_statement();
+        eat(PROG);
+        Node var_node = variable();
+        string prog_name = var_node.get_token().get_value();
+        eat(SEMI);
+        
+        Node block_node = block();
+        Node program_node(block_node, Token(PROG, prog_name), PROGRAM);
         eat(DOT);
-        return n;
+        return program_node;
     }
 
     // compound_statement: BEGIN statement_list END
@@ -162,6 +179,63 @@ private:
     // empty: 
     Node empty() {
         return Node(Token(EMPTY, ""), NOOP);
+    }
+
+    // block: declarations compound_statement
+    Node block() {
+        vector<Node> nodes = declarations();
+        nodes.push_back(compound_statement()); // compount_statement will still be run last after the declaration nodes.
+        return Node(BLOCK, nodes);
+    }
+
+    // declarations: VARIABLE (variable_declarations SEMI)+
+    //               | empty
+    vector<Node> declarations() {
+        vector<Node> results;
+        
+        if (current.get_type() == VARIABLE) {
+            eat(VARIABLE);
+            while (current.get_type() == ID) {
+                vector<Node> n = variable_declaration();
+                results.insert(end(results), begin(n), end(n));
+                eat(SEMI);
+            }
+        }
+
+        return results;
+    }
+
+    // variable_declaration : ID (COMMA ID)* COLON type_spec
+    vector<Node> variable_declaration() {
+        vector<Node> var_nodes = { Node(current, VAR) };
+        eat(ID);
+
+        while (current.get_type() == COMMA) {
+            eat(COMMA);
+            var_nodes.push_back( Node(current, VAR) );
+            eat(ID);
+        }
+
+        eat(COLON);
+        
+        vector<Node> results;
+        Node type_node = type_spec();
+        for(auto it = begin(var_nodes); it != end(var_nodes);) {
+            results.push_back(Node(*it, type_node, Token(EMPTY, ""), VARDECL ));
+        }
+
+        return results;
+    }
+
+    // type_spec: INTEGER
+    //            | REAL
+    Node type_spec() {
+        if (current.get_type() == INTEGER) {
+            eat(INTEGER);
+        } else {
+            eat(REAL);
+        }
+        return Node(current, TYPE);
     }
 
 public:

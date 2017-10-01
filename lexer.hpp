@@ -17,11 +17,11 @@ private:
 	int line_number = 1;
 
     map<string, Token> reserved_keywords = {
-        make_pair ("PROGRAM", Token(PROGRAM, "PROGRAM"))
-        make_pair ("VAR", Token(VAR, "VAR"))
-        make_pair ("DIV", Token(INTEGER_DIV, "DIV"))
-        make_pair ("INTEGER", Token(INTEGER, "INTEGER"))
-        make_pair ("REAL", Token(REAL, "REAL"))
+        make_pair ("PROGRAM", Token(PROG, "PROGRAM")),
+        make_pair ("VAR", Token(VARIABLE, "VAR")),
+        make_pair ("DIV", Token(INTEGER_DIV, "DIV")),
+        make_pair ("INTEGER", Token(INTEGER, "INTEGER")),
+        make_pair ("REAL", Token(REAL, "REAL")),
         make_pair ("BEGIN", Token(BEGIN, "BEGIN")),
         make_pair ("END", Token(END, "END"))
     };
@@ -74,7 +74,7 @@ private:
 			advance();
 		}
 
-        if current_char == '.' {
+        if (current_char == '.') {
             result += current_char;
 
             while (isdigit(current_char) && current_char != 0) {
@@ -83,7 +83,7 @@ private:
             }
             return Token(REAL_CONST, result);
         } else {
-            return TOKEN(INTEGER_CONST, result);
+            return Token(INTEGER_CONST, result);
         }
 	}
 
@@ -128,7 +128,7 @@ public:
 			}
 
             if (current_char == '{') {
-                this->skip_multi_linecomment();
+                this->skip_multi_line_comment();
                 continue;
             }
 

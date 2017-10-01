@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-enum Type { $, EMPTY, NUMBER, PLUS, MINUS, MUL, LPAREN, RPAREN, BEGIN, END, DOT, ID, ASSIGN, SEMI, PROGRAM, COLON, COMMA, INTEGER, REAL, INTEGER_CONST, REAL_CONST, INTEGER_DIV, FLOAT_DIV };
+enum Type { $, EMPTY, NUMBER, PLUS, MINUS, MUL, LPAREN, RPAREN, BEGIN, END, DOT, ID, ASSIGN, SEMI, PROG, VARIABLE, COLON, COMMA, INTEGER, REAL, INTEGER_CONST, REAL_CONST, INTEGER_DIV, FLOAT_DIV };
 
 class Token
 {
@@ -14,6 +14,7 @@ public:
 	Type get_type() { return t; }
 	std::string get_value() { return v; }
     int get_int() { return std::stoi(v); }
+    double get_double() { return std::stod(v); }
 
     // Default contructor so we can use the map<string, Token> for reserved keywords
     Token() { t = $; v = ""; }
