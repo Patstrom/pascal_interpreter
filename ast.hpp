@@ -2,7 +2,7 @@
 #include <memory>
 #include "token.hpp"
 
-enum Op { NUM, BIN, UNARY, COMPOUND, EQ, VAR, NOOP };
+enum Op { NUM, BIN, UNARY, COMPOUND, EQ, VAR, NOOP, PROGRAM, BLOCK, VARDECL, TYPE };
 
 class Node {
     protected:
@@ -25,7 +25,7 @@ class Node {
             left = std::make_shared<Node>(expr);
         }
 
-        // For numbers
+        // For numbers and types
         Node(Token t, Op o) : left(NULL), right(NULL), token(t), op(o) {} // For numbers
 
         // For compound_statement
