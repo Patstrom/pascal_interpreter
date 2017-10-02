@@ -1,4 +1,4 @@
-simple LL(1) interpreter of a subset of pascal.
+simple recursive descent parser and interpreter of a subset of pascal.
 
 Thanks to a great guide here: https://ruslanspivak.com/lsbasi-part7/
 
