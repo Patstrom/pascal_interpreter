@@ -52,7 +52,12 @@ class SymbolTable {
         friend std::ostream& operator<<(std::ostream& strm, const SymbolTable &s) {
             strm << "symbol_table: {" << std::endl;
             for(auto elem : s.symbols) {
-                strm << "\t" << elem.first << " : " << elem.second.get_name() << std::endl;
+                auto type = elem.second.get_type();
+                if (type != nullptr) {
+                    strm << "\t" << elem.first << " : " << elem.second.get_type()->get_name() << std::endl;
+                } else {
+                    strm << "\t" << elem.first << " : " << elem.second.get_name() << std::endl;
+                }
             }
             return strm << "}";
         }
