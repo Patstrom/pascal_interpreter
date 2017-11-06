@@ -9,7 +9,7 @@ void printTree(std::shared_ptr<Node> n) {
     if(n == NULL) return;
     Token t = n->get_token();
     std::cout << n->get_op() << " : " << t.get_type() << " : " << t.get_value() << std::endl;
-    if(n->get_op() == COMPOUND) {
+    if(n->get_op() == COMPOUND || n->get_op() == BLOCK) {
         std::cout << "Number of statements: " << n->get_children().size() << std::endl;
         for(auto child : n->get_children()) {
             printTree(child);
@@ -32,8 +32,9 @@ int main(int argc, char * argv[])
 
     Lexer lexer(program);
     Parser parser(lexer);
-    //printTree(parser.parse());
-    Interpreter interpreter(parser.parse());
+    auto root = parser.parse();
+    //printTree(root);
+    Interpreter interpreter(root);
 
     interpreter.interpret();
 	

@@ -43,16 +43,16 @@ typedef std::shared_ptr<Node> node_ptr;
 
         void visit_vardecl(node_ptr n) {
             string type_name = n->get_right()->get_token().get_value();
-            Symbol type_symbol = symbols.lookup(type_name);
+            Symbol type_symbol = symbols.find(type_name);
             string var_name = n->get_left()->get_token().get_value();
             VarSymbol var_symbol(var_name, type_symbol);
-            symbols.define(var_symbol);
+            symbols.insert(var_symbol);
         }
 
         void visit_assign(node_ptr n) {
             string var_name = n->get_left()->get_token().get_value();
 
-            Symbol var_symbol = symbols.lookup(var_name);
+            Symbol var_symbol = symbols.find(var_name);
             if ( var_symbol.get_name() == "" && var_symbol.get_type() == nullptr ) {
                 cout << var_name << " is not defined" << endl;
                 exit(1);
@@ -62,7 +62,7 @@ typedef std::shared_ptr<Node> node_ptr;
         void visit_var(node_ptr n) {
             string var_name = n->get_token().get_value();
 
-            Symbol var_symbol = symbols.lookup(var_name);
+            Symbol var_symbol = symbols.find(var_name);
             if ( var_symbol.get_name() == "" && var_symbol.get_type() == nullptr ) {
                 cout << "Variable is not defined" << endl;
                 exit(1); 

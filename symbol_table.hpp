@@ -35,21 +35,19 @@ class SymbolTable {
         map<string, Symbol> symbols;
 
         void init_builtins() {
-            this->define(BuiltinType("INTEGER"));
-            this->define(BuiltinType("REAL"));
+            this->insert(BuiltinType("INTEGER"));
+            this->insert(BuiltinType("REAL"));
         }
     public:
         SymbolTable() {
             init_builtins();
         }
 
-        void define(Symbol s) {
+        void insert(Symbol s) {
             symbols[s.get_name()] = s;
         }
 
-        Symbol lookup(string name) { return symbols[name]; }
-
-        Symbol& operator[](std::string idx) { return this->symbols[idx]; }
+        Symbol find(string name) { return symbols[name]; }
 
         friend std::ostream& operator<<(std::ostream& strm, const SymbolTable &s) {
             strm << "symbol_table: {" << std::endl;

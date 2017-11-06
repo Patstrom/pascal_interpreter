@@ -9,7 +9,6 @@ g++ main.cpp
 ```
 
 # TODO
-* For some reason a semicolon gets added as a symbol. Fix that.
 * Continue to part 12 of the blog
 
 # What I would have done differently

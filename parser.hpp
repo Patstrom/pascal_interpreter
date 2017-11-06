@@ -231,12 +231,13 @@ private:
     // type_spec: INTEGER
     //            | REAL
     Node type_spec() {
+        Token t = current;
         if (current.get_type() == INTEGER) {
             eat(INTEGER);
         } else {
             eat(REAL);
         }
-        return Node(current, TYPE);
+        return Node(t, TYPE);
     }
 
 public:
