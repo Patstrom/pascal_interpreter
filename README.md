@@ -11,3 +11,7 @@ g++ main.cpp
 # TODO
 * For some reason a semicolon gets added as a symbol. Fix that.
 * Continue to part 12 of the blog
+
+# What I would have done differently
+* `Node` shouldn't have an enum to determine what type of node it is. Instead it should
+have different derived classes. This would also simplify the node visitor.
