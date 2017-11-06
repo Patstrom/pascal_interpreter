@@ -68,7 +68,7 @@ class Interpreter {
             if ( GLOBAL_MEM.find(var_name) != GLOBAL_MEM.end() ) {
                 return GLOBAL_MEM[var_name];
             } else {
-                cout << var_name << " was no declared" << endl;
+                cout << var_name << " was not declared" << endl;
                 exit(1);
             }
 
