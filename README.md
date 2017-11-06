@@ -1,6 +1,6 @@
 simple recursive descent parser and interpreter of a subset of pascal.
 
-Thanks to a great guide here: https://ruslanspivak.com/lsbasi-part7/
+Thanks to a great guide here: https://ruslanspivak.com/lsbasi-part1/
 
 
 ```bash
@@ -9,7 +9,8 @@ g++ main.cpp
 ```
 
 # TODO
-* Continue to part 12 of the blog
+* Continue to part 14 of the blog
+* Procedures are still unfinished
 
 # What I would have done differently
 * `Node` shouldn't have an enum to determine what type of node it is. Instead it should
