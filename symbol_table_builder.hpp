@@ -46,6 +46,10 @@ typedef std::shared_ptr<Node> node_ptr;
             Symbol type_symbol = symbols.find(type_name);
             string var_name = n->get_left()->get_token().get_value();
             VarSymbol var_symbol(var_name, type_symbol);
+            if (symbols.contains(var_symbol.get_name())) {
+                std::cout << var_symbol.get_name() << " declared twice" << std::endl;
+                exit(1);
+            }
             symbols.insert(var_symbol);
         }
 
@@ -53,7 +57,7 @@ typedef std::shared_ptr<Node> node_ptr;
             string var_name = n->get_left()->get_token().get_value();
 
             Symbol var_symbol = symbols.find(var_name);
-            if ( var_symbol.get_name() == "" && var_symbol.get_type() == nullptr ) {
+            if (!symbols.contains(var_symbol.get_name())) {
                 cout << var_name << " is not defined" << endl;
                 exit(1);
             }
@@ -67,6 +71,10 @@ typedef std::shared_ptr<Node> node_ptr;
                 cout << "Variable is not defined" << endl;
                 exit(1); 
             }
+        }
+
+        void visit_procdecl(node_ptr n) {
+            return;
         }
 
     public:
@@ -102,6 +110,9 @@ typedef std::shared_ptr<Node> node_ptr;
                     break;
                 case VARDECL:
                     visit_vardecl(n);
+                    break;
+                case PROCDECL:
+                    visit_procdecl(n);
                     break;
                 //case TYPE:
                 //    visit_type(n);

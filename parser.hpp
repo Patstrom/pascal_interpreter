@@ -190,6 +190,7 @@ private:
     }
 
     // declarations: VARIABLE (variable_declarations SEMI)+
+    //               | (PROCEDURE ID SEMI block SEMI)*
     //               | empty
     vector<Node> declarations() {
         vector<Node> results;
@@ -201,6 +202,16 @@ private:
                 results.insert(end(results), begin(n), end(n));
                 eat(SEMI);
             }
+        }
+
+        while (current.get_type() == PROCEDURE) {
+            eat(PROCEDURE);
+            Token proc_name = current;
+            eat(ID);
+            eat(SEMI);
+            Node proc_decl = Node(block(), proc_name, PROCDECL);
+            eat(SEMI);
+            results.push_back(proc_decl);
         }
 
         return results;

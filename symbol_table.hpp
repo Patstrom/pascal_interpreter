@@ -61,4 +61,8 @@ class SymbolTable {
             }
             return strm << "}";
         }
+
+        bool contains(string name) {
+            return symbols.find(name) != symbols.end();
+        }
 };

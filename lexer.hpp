@@ -23,7 +23,8 @@ private:
         make_pair ("INTEGER", Token(INTEGER, "INTEGER")),
         make_pair ("REAL", Token(REAL, "REAL")),
         make_pair ("BEGIN", Token(BEGIN, "BEGIN")),
-        make_pair ("END", Token(END, "END"))
+        make_pair ("END", Token(END, "END")),
+        make_pair ("PROCEDURE", Token(PROCEDURE, "PROCEDURE"))
     };
 
 

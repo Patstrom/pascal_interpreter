@@ -92,6 +92,10 @@ class Interpreter {
             return;
         }
 
+        void visit_procdecl(node_ptr n) {
+            return;
+        }
+
         double visit(node_ptr n) {
             switch(n->get_op()) {
                 case NUM:
@@ -121,6 +125,9 @@ class Interpreter {
                     break;
                 case TYPE:
                     visit_type(n);
+                    break;
+                case PROCDECL:
+                    visit_procdecl(n);
                     break;
             }
             return 0;
